@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthCare Pulse | Hospital Appointment & EMR System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+
+    <!-- TOP NAVIGATION BAR -->
+    <nav class="navbar">
+        <a href="#" class="brand" onclick="showRoleSelectionScreen(); return false;">
+            <svg viewBox="0 0 24 24">
+                <path d="M19 10.5h-5.5V5c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v5.5H5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5h5.5V19c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-5.5H19c.83 0 1.5-.67 1.5-1.5s-.67-1.5-1.5-1.5z"/>
+            </svg>
+            HealthCare Pulse
+        </a>
+
+        <div class="nav-controls">
+            <!-- USER SESSION CONTROL -->
+            <div id="authNavControls" style="display: flex; align-items: center; gap: 0.75rem;">
+                <!-- Dynamic Auth Buttons -->
+            </div>
+
+            <!-- THEME COLOR PICKER -->
+            <div class="theme-picker-bar">
+                <span class="color-dot active" style="background: #2563eb;" onclick="setAccentColor('#2563eb', '#1d4ed8', '#eff6ff')" title="Royal Blue"></span>
+                <span class="color-dot" style="background: #0d9488;" onclick="setAccentColor('#0d9488', '#0f766e', '#f0fdf4')" title="Emerald Teal"></span>
+                <span class="color-dot" style="background: #8b5cf6;" onclick="setAccentColor('#8b5cf6', '#7c3aed', '#f5f3ff')" title="Violet Purple"></span>
+                <span class="color-dot" style="background: #e11d48;" onclick="setAccentColor('#e11d48', '#be123c', '#fff1f2')" title="Crimson Red"></span>
+            </div>
+
+            <select id="backgroundThemeSelect" class="input" style="padding: 0.35rem 0.6rem; font-size: 0.8rem; width: auto;" onchange="changeBackgroundTheme(this.value)">
+                <option value="light">☀️ Light Bg</option>
+                <option value="dark">🌙 Dark Bg</option>
+                <option value="cream">📜 Cream Bg</option>
+                <option value="slate">🌆 Slate Bg</option>
+            </select>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="container">
+
+        <!-- ==================== LANDING ROLE SELECTION SCREEN ==================== -->
+        <section id="roleSelectionScreen" style="padding: 2rem 0; text-align: center;">
+            <div style="max-width: 600px; margin: 0 auto 2.5rem;">
+                <h1 style="font-size: 2.2rem; font-weight: 800; color: var(--primary); margin-bottom: 0.5rem;">Welcome to HealthCare Pulse</h1>
+                <p style="color: var(--text-secondary); font-size: 1.05rem;">Select your portal below to log in or register</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; max-width: 1000px; margin: 0 auto;">
+                
+                <!-- PATIENT ENTRY CARD -->
+                <div class="card" style="padding: 2rem 1.25rem; border-top: 4px solid var(--primary); transition: transform 0.2s;" onmouseenter="this.style.transform='translateY(-5px)'" onmouseleave="this.style.transform='translateY(0)'">
+                    <div style="font-size: 3.2rem; margin-bottom: 0.75rem;">👤</div>
+                    <h2 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem;">I am a Patient</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.25rem; line-height: 1.45;">
+                        Find top medical specialists, book appointments with dynamic UPI QR payments, and access your digital prescriptions.
+                    </p>
+                    <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+                        <button class="btn btn-primary" onclick="openPatientLoginModal()" style="width: 100%;">Patient Sign In</button>
+                        <button class="btn btn-outline" onclick="openRegisterModal()" style="width: 100%;">Register New Patient Account</button>
+                    </div>
+                </div>
+
+                <!-- DOCTOR ENTRY CARD -->
+                <div class="card" style="padding: 2rem 1.25rem; border-top: 4px solid var(--secondary); transition: transform 0.2s;" onmouseenter="this.style.transform='translateY(-5px)'" onmouseleave="this.style.transform='translateY(0)'">
+                    <div style="font-size: 3.2rem; margin-bottom: 0.75rem;">🩺</div>
+                    <h2 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem;">I am a Doctor</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.25rem; line-height: 1.45;">
+                        Log in to view your assigned daily patient list, write clinical diagnoses, issue digital prescriptions, and manage working slots.
+                    </p>
+                    <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+                        <button class="btn btn-primary" style="background: var(--secondary); border-color: var(--secondary); width: 100%;" onclick="openDoctorLoginModal()">Doctor Portal Sign In</button>
+                    </div>
+                </div>
+
+                <!-- ADMIN ENTRY CARD -->
+                <div class="card" style="padding: 2rem 1.25rem; border-top: 4px solid var(--accent); transition: transform 0.2s;" onmouseenter="this.style.transform='translateY(-5px)'" onmouseleave="this.style.transform='translateY(0)'">
+                    <div style="font-size: 3.2rem; margin-bottom: 0.75rem;">🛡️</div>
+                    <h2 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem;">I am an Admin</h2>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.25rem; line-height: 1.45;">
+                        Appoint new doctors, generate Doctor ID & Passwords, view complete registered patient directory, and hospital analytics.
+                    </p>
+                    <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+                        <button class="btn btn-primary" style="background: var(--accent); border-color: var(--accent); width: 100%;" onclick="openAdminLoginModal()">Admin Portal Sign In</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ==================== 1. PATIENT PORTAL VIEW ==================== -->
+        <section id="patientView" style="display: none;">
+            <div class="dashboard-header">
+                <div class="dashboard-title">
+                    <h1 id="patientWelcomeText">Welcome back, Patient</h1>
+                    <p>Find doctors, schedule your appointments with dynamic QR payment, and track your medical history online.</p>
+                </div>
+                <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                    <button class="btn btn-secondary" onclick="showPatientViewTab('doctors')">🔍 Find Doctors</button>
+                    <button class="btn btn-outline" onclick="showPatientViewTab('my-appointments')">📅 My Appointments</button>
+                    <button class="btn btn-outline" onclick="showPatientViewTab('medical-records')">📋 Medical Records</button>
+                </div>
+            </div>
+
+            <!-- SEARCH & FILTER BAR -->
+            <div id="doctorSearchTab" class="card" style="margin-bottom: 2rem;">
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <div style="flex: 2; min-width: 250px;">
+                        <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 0.35rem;">Search Doctor / Condition</label>
+                        <input type="text" id="doctorSearchInput" class="input" placeholder="Search by name, specialty, or hospital room..." oninput="filterDoctors()">
+                    </div>
+                    <div style="flex: 1; min-width: 180px;">
+                        <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 0.35rem;">Specialization</label>
+                        <select id="specializationSelect" onchange="filterDoctors()">
+                            <option value="all">All Specialties</option>
+                            <option value="Cardiology">Cardiology</option>
+                            <option value="Neurology">Neurology</option>
+                            <option value="Dermatology">Dermatology</option>
+                            <option value="Pediatrics">Pediatrics</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DOCTORS GRID -->
+            <div id="doctorsGridContainer">
+                <h2 style="font-size: 1.3rem; margin-bottom: 1.25rem; font-weight: 700;">Available Doctors & Specialists</h2>
+                <div id="doctorsGrid" class="doctor-grid">
+                    <!-- Dynamic rendering -->
+                </div>
+            </div>
+
+            <!-- PATIENT APPOINTMENTS LIST TAB -->
+            <div id="patientAppointmentsTab" class="card" style="display: none;">
+                <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">My Booked Appointments</h2>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Doctor</th>
+                                <th>Specialty</th>
+                                <th>Date & Time</th>
+                                <th>Room</th>
+                                <th>Fee & Payment</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="patientAppointmentsTable">
+                            <!-- Dynamic rendering -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- PATIENT MEDICAL RECORDS TAB -->
+            <div id="patientMedicalRecordsTab" class="card" style="display: none;">
+                <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">My Digital Health Records & Prescriptions</h2>
+                <div id="patientRecordsList">
+                    <!-- Dynamic rendering -->
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==================== 2. DOCTOR PORTAL VIEW ==================== -->
+        <section id="doctorView" style="display: none;">
+            <div class="dashboard-header">
+                <div class="dashboard-title">
+                    <h1 id="doctorWelcomeText">Doctor Portal - My Patient List</h1>
+                    <p>Manage your patient queue, record diagnoses, and issue digital prescriptions.</p>
+                </div>
+                <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="showDoctorTab('queue')">📋 My Patient List & Appointments</button>
+                    <button class="btn btn-outline" onclick="showDoctorTab('schedule')">⏰ Working Hours</button>
+                </div>
+            </div>
+
+            <!-- APPOINTMENTS QUEUE TAB -->
+            <div id="doctorQueueTab">
+                <div class="grid-4">
+                    <div class="card stat-card">
+                        <div class="stat-icon blue">📅</div>
+                        <div class="stat-info">
+                            <h3 id="docTotalAppts">0</h3>
+                            <p>Total Appointments</p>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon teal">⏳</div>
+                        <div class="stat-info">
+                            <h3 id="docPendingAppts">0</h3>
+                            <p>Upcoming / Pending</p>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon green">✅</div>
+                        <div class="stat-info">
+                            <h3 id="docCompletedAppts">0</h3>
+                            <p>Completed Visits</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem;">
+                        <div>
+                            <h2 style="font-size: 1.25rem; font-weight: 700; margin: 0;">My Patient List & Appointments Queue</h2>
+                            <span id="docQueueSummaryBadge" style="font-size: 0.82rem; color: var(--primary); font-weight: 600;">Showing all patient visits</span>
+                        </div>
+
+                        <!-- DATE FILTER & SORTING CONTROLS -->
+                        <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                            <div style="display: flex; align-items: center; gap: 0.35rem;">
+                                <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">📅 Filter Date:</label>
+                                <input type="date" id="docQueueDateFilter" class="input" style="padding: 0.35rem 0.6rem; font-size: 0.8rem; width: auto;" onchange="filterAndSortDoctorQueue()">
+                            </div>
+
+                            <div style="display: flex; align-items: center; gap: 0.35rem;">
+                                <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">🔤 Sort By:</label>
+                                <select id="docQueueSortSelect" class="input" style="padding: 0.35rem 0.6rem; font-size: 0.8rem; width: auto;" onchange="filterAndSortDoctorQueue()">
+                                    <option value="name-asc">🔤 Patient Name (A to Z)</option>
+                                    <option value="name-desc">🔤 Patient Name (Z to A)</option>
+                                    <option value="time-asc">⏰ Date & Time (Earliest First)</option>
+                                    <option value="time-desc">⏰ Date & Time (Latest First)</option>
+                                </select>
+                            </div>
+
+                            <button class="btn btn-outline btn-sm" onclick="resetDocQueueFilters()">Show All Dates</button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Patient Name</th>
+                                    <th>Contact Info</th>
+                                    <th>Appointment Date & Time</th>
+                                    <th>Reason / Symptoms</th>
+                                    <th>Status & Payment</th>
+                                    <th>Clinical Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="doctorQueueTable">
+                                <!-- Dynamic rendering -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DOCTOR WORKING HOURS / SCHEDULE TAB -->
+            <div id="doctorScheduleTab" class="card" style="display: none;">
+                <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">Manage Availability & Working Slots</h2>
+                <div id="scheduleSlotsForm">
+                    <!-- Dynamic Days rendering -->
+                </div>
+                <button class="btn btn-primary" style="margin-top: 1.5rem;" onclick="saveDoctorSchedule()">Save Schedule Settings</button>
+            </div>
+        </section>
+
+
+        <!-- ==================== 3. EXCLUSIVE ADMIN PORTAL VIEW ==================== -->
+        <section id="adminView" style="display: none;">
+            <div class="dashboard-header">
+                <div class="dashboard-title">
+                    <h1>🛡️ Admin Control Panel</h1>
+                    <p>Manage hospital doctors, generate doctor ID & passwords, view all patient records, and track revenue.</p>
+                </div>
+                <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                    <button id="adminTabOverview" class="btn btn-secondary" onclick="showAdminTab('overview')">📊 Overview Stats</button>
+                    <button id="adminTabDoctors" class="btn btn-outline" onclick="showAdminTab('doctors-list')">👨‍⚕️ Manage & Remove Doctors</button>
+                    <button id="adminTabAppoint" class="btn btn-outline" onclick="openAddDoctorModal()">+ Appoint New Doctor</button>
+                    <button id="adminTabPatients" class="btn btn-outline" onclick="showAdminTab('patients-list')">😷 Show All Registered Patients</button>
+                </div>
+            </div>
+
+            <!-- ADMIN TAB 1: OVERVIEW -->
+            <div id="adminOverviewTab">
+                <div class="grid-4">
+                    <div class="card stat-card">
+                        <div class="stat-icon blue">👨‍⚕️</div>
+                        <div class="stat-info">
+                            <h3 id="adminDoctorsCount">0</h3>
+                            <p>Active Doctors</p>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon teal">😷</div>
+                        <div class="stat-info">
+                            <h3 id="adminPatientsCount">0</h3>
+                            <p>Registered Patients</p>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon purple">📅</div>
+                        <div class="stat-info">
+                            <h3 id="adminAppointmentsCount">0</h3>
+                            <p>Total Bookings</p>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon green">💲</div>
+                        <div class="stat-info">
+                            <h3 id="adminRevenueCount">₹0</h3>
+                            <p>Hospital Consultation Revenue</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;" class="admin-charts-grid">
+                    <div class="card">
+                        <h2 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem;">Recent Hospital Bookings</h2>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Patient</th>
+                                        <th>Doctor</th>
+                                        <th>Specialty</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>Prescription / Rx</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminRecentApptsTable">
+                                    <!-- Dynamic rendering -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h2 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem;">Specializations Distribution</h2>
+                        <canvas id="specChart" height="220"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADMIN TAB 2: SHOW ALL PATIENTS LIST -->
+            <div id="adminPatientsListTab" class="card" style="display: none;">
+                <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">All Registered Patients Directory</h2>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Patient ID</th>
+                                <th>Full Name</th>
+                                <th>Email / Contact</th>
+                                <th>DOB & Gender</th>
+                                <th>Blood Group</th>
+                                <th>Emergency Contact</th>
+                                <th>Total Visits</th>
+                                <th>Admin Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminPatientsTable">
+                            <!-- Dynamic rendering -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ADMIN TAB 3: MANAGE & REMOVE DOCTORS -->
+            <div id="adminDoctorsListTab" class="card" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h2 style="font-size: 1.25rem; font-weight: 700;">Doctor Access & Roster Control</h2>
+                    <button class="btn btn-primary btn-sm" onclick="openAddDoctorModal()">+ Appoint New Doctor</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Doctor ID</th>
+                                <th>Doctor Name</th>
+                                <th>Email / Login</th>
+                                <th>Specialization</th>
+                                <th>Room & Fee</th>
+                                <th>Experience</th>
+                                <th>Admin Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminDoctorsTable">
+                            <!-- Dynamic rendering -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- ==================== DEDICATED PATIENT LOGIN MODAL ==================== -->
+    <div id="patientLoginModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 420px;">
+            <div class="modal-header">
+                <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--primary);">👤 Patient Sign In</h2>
+                <button class="close-btn" onclick="closeModal('patientLoginModal')">&times;</button>
+            </div>
+            <form onsubmit="handleRoleLogin(event, 'patient')">
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Patient Email</label>
+                    <input type="email" id="patEmailInput" class="input" value="john.doe@gmail.com" placeholder="john.doe@gmail.com" required>
+                </div>
+
+                <div style="margin-bottom: 1.25rem;">
+                    <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Password</label>
+                    <div style="position: relative;">
+                        <input type="password" id="patPassInput" class="input" style="padding-right: 2.5rem;" value="demo123" required>
+                        <button type="button" onclick="togglePasswordInput('patPassInput', this)" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1rem;" title="Toggle Password Masking">👁️</button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">Sign In as Patient</button>
+
+                <div style="text-align: center; font-size: 0.85rem; color: var(--text-secondary);">
+                    New Patient? <a href="#" onclick="openRegisterModal(); return false;" style="color: var(--primary); font-weight: 600; text-decoration: none;">Register New Account</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- ==================== PATIENT EMAIL OTP VERIFICATION MODAL ==================== -->
+    <div id="otpModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 420px; text-align: center;">
+            <div class="modal-header">
+                <div>
+                    <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--primary);">📩 Email OTP Verification</h2>
+                    <p style="font-size: 0.8rem; color: var(--text-secondary);">Enter the 6-digit code sent to your email</p>
+                </div>
+                <button class="close-btn" onclick="closeModal('otpModal')">&times;</button>
+            </div>
+
+            <!-- SIMULATED EMAIL INBOX PREVIEW BANNER -->
+            <div id="otpNoticeBanner" style="background: var(--primary-light); border: 1px dashed var(--primary); padding: 0.85rem; border-radius: 10px; margin-bottom: 1.25rem; font-size: 0.85rem; text-align: left;">
+                <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; margin-bottom: 0.25rem;">📬 Simulated Email Delivery</div>
+                <div>Code sent to: <strong id="otpEmailTargetDisplay" style="color: var(--primary);">patient@email.com</strong></div>
+                <div style="margin-top: 0.35rem; font-size: 0.95rem;">Your 6-Digit OTP: <span id="otpCodePreviewDisplay" style="font-weight: 800; font-family: monospace; font-size: 1.2rem; color: var(--primary); background: white; padding: 0.15rem 0.5rem; border-radius: 4px; border: 1px solid var(--border);">------</span></div>
+            </div>
+
+            <form onsubmit="handleOtpVerifySubmit(event)">
+                <div style="margin-bottom: 1.25rem;">
+                    <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.5rem;">6-Digit Verification OTP</label>
+                    <input type="text" id="otpCodeInput" class="input" placeholder="Enter 6-digit OTP" maxlength="6" style="text-align: center; font-size: 1.3rem; letter-spacing: 0.35rem; font-weight: 700; font-family: monospace;" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">✅ Verify OTP & Access Portal</button>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--text-secondary);">
+                    <span id="otpCountdownTimer">Resend OTP in 60s</span>
+                    <button type="button" id="resendOtpBtn" class="btn btn-outline btn-sm" onclick="resendPatientOtp()" disabled>Resend Code 🔄</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- ==================== DEDICATED DOCTOR LOGIN MODAL ==================== -->
+    <div id="doctorLoginModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 420px;">
+            <div class="modal-header">
+                <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--secondary);">🩺 Doctor Portal Sign In</h2>
+                <button class="close-btn" onclick="closeModal('doctorLoginModal')">&times;</button>
+            </div>
+            <form onsubmit="handleRoleLogin(event, 'doctor')">
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Doctor Email</label>
+                    <input type="email" id="docEmailInput" class="input" value="" placeholder="Enter doctor email address" required>
+                </div>
+
+                <div style="margin-bottom: 1.25rem;">
+                    <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Password</label>
+                    <div style="position: relative;">
+                        <input type="password" id="docPassInput" class="input" style="padding-right: 2.5rem;" value="" placeholder="Enter password" required>
+                        <button type="button" onclick="togglePasswordInput('docPassInput', this)" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1rem;" title="Toggle Password Masking">👁️</button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; background: var(--secondary); border-color: var(--secondary);">Sign In & View Patient List</button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- ==================== DEDICATED ADMIN LOGIN MODAL ==================== -->
+    <div id="adminLoginModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 420px;">
+            <div class="modal-header">
+                <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--accent);">🛡️ Hospital Admin Sign In</h2>
+                <button class="close-btn" onclick="closeModal('adminLoginModal')">&times;</button>
+            </div>
+            <form onsubmit="handleRoleLogin(event, 'admin')">
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Admin Email</label>
+                    <input type="email" id="adminEmailInput" class="input" value="" placeholder="Enter admin email address" required>
+                </div>
+
+                <div style="margin-bottom: 1.25rem;">
+                    <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Password</label>
+                    <div style="position: relative;">
+                        <input type="password" id="adminPassInput" class="input" style="padding-right: 2.5rem;" value="" placeholder="Enter admin password" required>
+                        <button type="button" onclick="togglePasswordInput('adminPassInput', this)" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1rem;" title="Toggle Password Masking">👁️</button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; background: var(--accent); border-color: var(--accent);">Sign In to Admin Portal</button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- ==================== REGISTER PATIENT MODAL ==================== -->
+    <div id="registerModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 540px;">
+            <div class="modal-header">
+                <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--primary);">New Patient Registration</h2>
+                <button class="close-btn" onclick="closeModal('registerModal')">&times;</button>
+            </div>
+            <form id="registerForm" onsubmit="handleRegisterSubmit(event)">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Full Name</label>
+                        <input type="text" id="regFullName" class="input" placeholder="e.g. Alex Turner" required>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Email Address</label>
+                        <input type="email" id="regEmail" class="input" placeholder="alex.turner@gmail.com" required>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Password</label>
+                        <div style="position: relative;">
+                            <input type="password" id="regPassword" class="input" style="padding-right: 2.5rem;" placeholder="Create password" required>
+                            <button type="button" onclick="togglePasswordInput('regPassword', this)" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1rem;" title="Toggle Password Masking">👁️</button>
+                        </div>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Phone Number</label>
+                        <input type="text" id="regPhone" class="input" placeholder="+1 (555) 123-4567" required>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Date of Birth</label>
+                        <input type="date" id="regDob" class="input" value="1995-05-15" required>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Gender</label>
+                        <select id="regGender" class="input">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Blood Group</label>
+                        <select id="regBlood" class="input">
+                            <option value="O+">O+</option>
+                            <option value="A+">A+</option>
+                            <option value="B+">B+</option>
+                            <option value="AB+">AB+</option>
+                            <option value="O-">O-</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Home Address</label>
+                    <input type="text" id="regAddress" class="input" placeholder="123 Main St, Apartment 4B, New York">
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Create Account & Log In</button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- ==================== ADMIN: APPOINT / CREATE DOCTOR MODAL ==================== -->
+    <div id="addDoctorModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--accent);">Appoint New Doctor & Generate Credentials</h2>
+                <button class="close-btn" onclick="closeModal('addDoctorModal')">&times;</button>
+            </div>
+            <form id="addDoctorForm" onsubmit="handleAddDoctorSubmit(event)">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Doctor Full Name</label>
+                        <input type="text" id="addDocName" class="input" placeholder="e.g. Dr. Robert Chen" required>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Doctor Login Email</label>
+                        <input type="email" id="addDocEmail" class="input" placeholder="robert.chen@hospital.com" required>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Create Doctor Password</label>
+                        <div style="position: relative;">
+                            <input type="password" id="addDocPassword" class="input" style="padding-right: 2.5rem;" placeholder="Set password" required>
+                            <button type="button" onclick="togglePasswordInput('addDocPassword', this)" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1rem;" title="Toggle Password Masking">👁️</button>
+                        </div>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Phone Number</label>
+                        <input type="text" id="addDocPhone" class="input" placeholder="+1 (555) 321-7654">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Specialization</label>
+                        <select id="addDocSpec" class="input" required>
+                            <option value="" disabled selected>Select specialization...</option>
+                            <option value="Cardiology">Cardiology</option>
+                            <option value="Neurology">Neurology</option>
+                            <option value="Dermatology">Dermatology</option>
+                            <option value="Pediatrics">Pediatrics</option>
+                            <option value="Orthopedics">Orthopedics</option>
+                            <option value="General Medicine">General Medicine</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Qualification</label>
+                        <input type="text" id="addDocQual" class="input" placeholder="e.g. MD, FACC" required>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Experience (Yrs)</label>
+                        <input type="number" id="addDocExp" class="input" placeholder="e.g. 8" min="0" required>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Fee (₹)</label>
+                        <input type="number" id="addDocFee" class="input" placeholder="e.g. 100" min="0" required>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Room</label>
+                        <input type="text" id="addDocRoom" class="input" placeholder="e.g. Suite 204" required>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Doctor Biography</label>
+                    <textarea id="addDocBio" rows="2" class="input" placeholder="Short biography and medical expertise summary..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; background: var(--accent); border-color: var(--accent);">Appoint Doctor & Generate Account</button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- ==================== ADMIN: EDIT DOCTOR DETAILS MODAL ==================== -->
+    <div id="editDoctorModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--primary);">✏️ Edit Doctor Profile & Credentials</h2>
+                <button class="close-btn" onclick="closeModal('editDoctorModal')">&times;</button>
+            </div>
+            <form id="editDoctorForm" onsubmit="handleEditDoctorSubmit(event)">
+                <input type="hidden" id="editDocId">
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Doctor Full Name</label>
+                        <input type="text" id="editDocName" class="input" required>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Doctor Login Email</label>
+                        <input type="email" id="editDocEmail" class="input" required>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Doctor Password (Current / Old)</label>
+                        <div style="position: relative;">
+                            <input type="password" id="editDocPassword" class="input" style="padding-right: 2.5rem; font-family: monospace; font-weight: 600; color: var(--primary);" placeholder="Doctor password">
+                            <button type="button" onclick="togglePasswordInput('editDocPassword', this)" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1rem;" title="Toggle Password Masking">👁️</button>
+                        </div>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Phone Number</label>
+                        <input type="text" id="editDocPhone" class="input">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Specialization</label>
+                        <select id="editDocSpec" class="input" required>
+                            <option value="Cardiology">Cardiology</option>
+                            <option value="Neurology">Neurology</option>
+                            <option value="Dermatology">Dermatology</option>
+                            <option value="Pediatrics">Pediatrics</option>
+                            <option value="Orthopedics">Orthopedics</option>
+                            <option value="General Medicine">General Medicine</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Qualification</label>
+                        <input type="text" id="editDocQual" class="input" required>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Experience (Yrs)</label>
+                        <input type="number" id="editDocExp" class="input" required>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Fee (₹)</label>
+                        <input type="number" id="editDocFee" class="input" required>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Room</label>
+                        <input type="text" id="editDocRoom" class="input" required>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Doctor Biography</label>
+                    <textarea id="editDocBio" rows="2" class="input"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Save Changes & Update Doctor</button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- ==================== ADMIN: EDIT PATIENT REGISTRATION MODAL ==================== -->
+    <div id="editPatientModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 560px;">
+            <div class="modal-header">
+                <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--primary);">✏️ Edit Patient Registration & Medical Record</h2>
+                <button class="close-btn" onclick="closeModal('editPatientModal')">&times;</button>
+            </div>
+            <form id="editPatientForm" onsubmit="handleEditPatientSubmit(event)">
+                <input type="hidden" id="editPatId">
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Patient Full Name</label>
+                        <input type="text" id="editPatName" class="input" required>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Patient Email</label>
+                        <input type="email" id="editPatEmail" class="input" required>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Patient Password (Current / Old)</label>
+                        <div style="position: relative;">
+                            <input type="password" id="editPatPassword" class="input" style="padding-right: 2.5rem; font-family: monospace; font-weight: 600; color: var(--primary);" placeholder="Patient password">
+                            <button type="button" onclick="togglePasswordInput('editPatPassword', this)" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1rem;" title="Toggle Password Masking">👁️</button>
+                        </div>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Phone Number</label>
+                        <input type="text" id="editPatPhone" class="input" required>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Date of Birth</label>
+                        <input type="date" id="editPatDob" class="input" required>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Gender</label>
+                        <select id="editPatGender" class="input">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Blood Group</label>
+                        <select id="editPatBlood" class="input">
+                            <option value="O+">O+</option>
+                            <option value="A+">A+</option>
+                            <option value="B+">B+</option>
+                            <option value="AB+">AB+</option>
+                            <option value="O-">O-</option>
+                            <option value="A-">A-</option>
+                            <option value="B-">B-</option>
+                            <option value="AB-">AB-</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Emergency Contact Number</label>
+                    <input type="text" id="editPatEmergency" class="input" placeholder="e.g. +1 (555) 911-0022">
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Home Address</label>
+                    <input type="text" id="editPatAddress" class="input" placeholder="e.g. 742 Evergreen Terrace, Springfield">
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Medical History Summary</label>
+                    <textarea id="editPatMedicalHistory" rows="2" class="input" placeholder="Known allergies, chronic conditions, prior surgeries..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Save Changes & Update Patient</button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- ==================== BOOK APPOINTMENT MODAL ==================== -->
+    <div id="bookingModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2 style="font-size: 1.3rem; font-weight: 700;">Step 1: Select Appointment Details</h2>
+                <button class="close-btn" onclick="closeModal('bookingModal')">&times;</button>
+            </div>
+            <form id="bookingForm" onsubmit="proceedToPaymentStep(event)">
+                <input type="hidden" id="bookDoctorId">
+                <input type="hidden" id="bookDoctorFee">
+                
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Selected Doctor</label>
+                    <input type="text" id="bookDoctorName" class="input" readonly style="font-weight: 700; color: var(--primary);">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Date</label>
+                        <input type="date" id="bookDate" class="input" required min="2026-08-24">
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Time Slot</label>
+                        <select id="bookTime" class="input" required>
+                            <option value="09:00 AM">09:00 AM</option>
+                            <option value="10:00 AM">10:00 AM</option>
+                            <option value="11:30 AM">11:30 AM</option>
+                            <option value="02:00 PM">02:00 PM</option>
+                            <option value="03:30 PM">03:30 PM</option>
+                            <option value="04:30 PM">04:30 PM</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Reason for Visit</label>
+                    <input type="text" id="bookReason" class="input" placeholder="e.g. Regular Heart Checkup, Skin Rash, Consultation" required>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Symptoms (Optional)</label>
+                    <textarea id="bookSymptoms" rows="2" class="input" placeholder="Describe any symptoms you are experiencing..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Proceed to QR Payment 💳</button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- ==================== REAL PAYMENT QR MODAL ==================== -->
+    <div id="paymentQrModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 480px; text-align: center;">
+            <div class="modal-header">
+                <div>
+                    <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--primary);">Scan & Pay via UPI / QR</h2>
+                    <p style="font-size: 0.8rem; color: var(--text-secondary);">GPay, PhonePe, Paytm, BHIM, or Any Banking App</p>
+                </div>
+                <button class="close-btn" onclick="closeModal('paymentQrModal')">&times;</button>
+            </div>
+
+            <!-- PAYMENT SUMMARY & DYNAMIC QR DISPLAY -->
+            <div style="background: var(--primary-light); padding: 1rem; border-radius: 12px; margin-bottom: 1.25rem;">
+                <div style="font-size: 0.85rem; color: var(--text-secondary);">Consultation Fee Due</div>
+                <div id="payAmountDisplay" style="font-size: 2rem; font-weight: 800; color: var(--primary);">₹120.00</div>
+                <div id="payDoctorDisplay" style="font-size: 0.85rem; font-weight: 600; margin-top: 0.25rem;">Doctor: Dr. Sarah Jenkins</div>
+            </div>
+
+            <!-- REAL DYNAMIC QR CODE CONTAINER -->
+            <div style="display: flex; justify-content: center; align-items: center; flex-direction: column; margin-bottom: 1.25rem;">
+                <div id="qrCodeContainer" style="padding: 1rem; background: white; border-radius: 16px; border: 2px solid var(--border); box-shadow: var(--shadow);"></div>
+                <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.5rem; word-break: break-all;" id="upiStringPreview"></div>
+            </div>
+
+            <!-- CUSTOM MERCHANT UPI SETTING -->
+            <div style="margin-bottom: 1.25rem; text-align: left;">
+                <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">Merchant UPI ID / VPA (Editable):</label>
+                <input type="text" id="merchantUpiInput" class="input" value="hospital.health@upi" oninput="regenerateQrCode()" style="font-size: 0.85rem;">
+            </div>
+
+            <!-- TRANSACTION VERIFICATION FORM -->
+            <form onsubmit="handleFinalPaymentSubmit(event)">
+                <div style="margin-bottom: 1.25rem; text-align: left;">
+                    <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">Transaction Ref / UTR No. (Optional):</label>
+                    <input type="text" id="txnRefInput" class="input" placeholder="e.g. UPI/1049281923" style="font-size: 0.85rem;">
+                </div>
+
+                <div style="display: flex; gap: 0.75rem;">
+                    <button type="button" class="btn btn-outline" style="flex: 1;" onclick="closeModal('paymentQrModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="flex: 2;">✅ Confirm Payment & Book</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- ==================== PRESCRIPTION & DIAGNOSIS MODAL ==================== -->
+    <div id="prescriptionModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2 id="prescriptionModalTitle" style="font-size: 1.3rem; font-weight: 700;">Issue Medical Record & Prescription</h2>
+                <button class="close-btn" onclick="closeModal('prescriptionModal')">&times;</button>
+            </div>
+            
+            <!-- PREVIOUS PRESCRIPTIONS & OLD CHECKUP HISTORY SECTION -->
+            <div id="pastPrescriptionsContainer" style="margin-bottom: 1.25rem;"></div>
+
+            <form id="prescriptionForm" onsubmit="handlePrescriptionSubmit(event)">
+                <input type="hidden" id="prescApptId">
+                <input type="hidden" id="prescPatientId">
+
+                <!-- EDITABLE PRESCRIPTION DATE & TIMING FIELDS -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; background: var(--primary-light); padding: 0.85rem; border-radius: 10px; border: 1px solid var(--border);">
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 700; color: var(--primary); display: block; margin-bottom: 0.35rem;">📅 Prescription Date</label>
+                        <input type="date" id="prescDateInput" class="input" style="background: white;" required>
+                    </div>
+                    <div>
+                        <label style="font-size: 0.85rem; font-weight: 700; color: var(--primary); display: block; margin-bottom: 0.35rem;">⏰ Consultation Timing</label>
+                        <input type="text" id="prescTimeInput" class="input" style="background: white;" placeholder="e.g. 10:00 AM" required>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">New Diagnosis / Clinical Assessment</label>
+                    <input type="text" id="prescDiagnosis" class="input" placeholder="e.g. Acute Bronchitis, Essential Hypertension" required>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Prescribed Medications & Dosage</label>
+                    <textarea id="prescMedications" rows="4" class="input" placeholder="1. Amoxicillin 500mg - 1 tab every 8 hours for 7 days&#10;2. Paracetamol 650mg - as needed for fever" required></textarea>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Recommended Lab Tests / Procedures</label>
+                    <input type="text" id="prescLabTests" class="input" placeholder="e.g. Complete Blood Count (CBC), Chest X-Ray">
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Doctor's Notes & Advice</label>
+                    <textarea id="prescDoctorNotes" rows="2" class="input" placeholder="Follow-up in 10 days if symptoms persist. Avoid cold liquids."></textarea>
+                </div>
+
+                <button type="submit" id="prescSubmitBtn" class="btn btn-primary" style="width: 100%;">Save Record & Complete Appointment</button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- ==================== PATIENT PAST PRESCRIPTIONS & MEDICAL HISTORY MODAL ==================== -->
+    <div id="patientHistoryModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 680px;">
+            <div class="modal-header">
+                <div>
+                    <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--primary);" id="historyPatientNameTitle">📋 Patient Medical & Prescription History</h2>
+                    <p style="font-size: 0.8rem; color: var(--text-secondary);">Previous checkups, old prescriptions, and lab diagnostic history</p>
+                </div>
+                <button class="close-btn" onclick="closeModal('patientHistoryModal')">&times;</button>
+            </div>
+            <div id="patientHistoryContent" style="max-height: 500px; overflow-y: auto; padding-right: 0.5rem;">
+                <!-- Dynamic Past Prescriptions Timeline -->
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==================== VIEW/PRINT PRESCRIPTION MODAL ==================== -->
+    <div id="viewRecordModal" class="modal-overlay">
+        <div class="modal-card prescription-printable" style="max-width: 650px;">
+            <div class="modal-header" style="border-bottom: 2px solid var(--primary);">
+                <div>
+                    <h2 style="font-size: 1.4rem; color: var(--primary); font-weight: 700;">HealthCare Pulse Clinic</h2>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary);">Digital Medical Prescription & Consultation Summary</p>
+                </div>
+                <button class="close-btn" onclick="closeModal('viewRecordModal')">&times;</button>
+            </div>
+            
+            <div id="viewRecordContent" style="margin-bottom: 1.5rem;">
+                <!-- Dynamic Content -->
+            </div>
+
+            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                <button class="btn btn-secondary" onclick="window.print()">🖨️ Print Prescription</button>
+                <button class="btn btn-outline" onclick="closeModal('viewRecordModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- APP SCRIPT -->
+    <script src="/js/app.js"></script>
+</body>
+</html>
