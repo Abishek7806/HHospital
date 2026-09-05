@@ -1,4 +1,5 @@
+# Node / Temp files
 node_modules/
-.env
-*.log
 .DS_Store
+*.log
+.env
